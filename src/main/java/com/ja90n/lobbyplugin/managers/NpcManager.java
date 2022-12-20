@@ -47,6 +47,15 @@ public class NpcManager {
     }
 
     // Get NPCs
+    public Npc getNPC(int entityId){
+        for (Npc npc : getNpcs()){
+            if (npc.getEntityId() == entityId){
+                return npc;
+            }
+        }
+        return null;
+    }
+
     private ArrayList<Npc> getNpcs() {
         return npcs;
     }

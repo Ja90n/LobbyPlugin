@@ -26,6 +26,7 @@ public class Npc {
     private ArrayList<UUID> playerUUIDs;
     private final ServerPlayer npc;
     private final int id;
+    private final int entityId;
     private final Skin skin;
     private final Location location;
 
@@ -43,6 +44,8 @@ public class Npc {
 
         npc = new ServerPlayer(minecraftServer, serverLevel, gameProfile, null);
         npc.setPos(location.getX(), location.getY(), location.getZ());
+
+        entityId = npc.getId();
     }
 
     public void showNPC(Player player){
@@ -76,6 +79,10 @@ public class Npc {
 
     public int getId() {
         return id;
+    }
+
+    public int getEntityId() {
+        return entityId;
     }
 
     public Skin getSkin() {

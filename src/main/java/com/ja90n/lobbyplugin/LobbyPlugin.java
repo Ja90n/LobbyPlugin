@@ -2,6 +2,7 @@ package com.ja90n.lobbyplugin;
 
 import com.ja90n.lobbyplugin.commands.MainCommand;
 import com.ja90n.lobbyplugin.listeners.PlayerConnectionListener;
+import com.ja90n.lobbyplugin.listeners.PlayerNPCClickListener;
 import com.ja90n.lobbyplugin.managers.NpcManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ public final class LobbyPlugin extends JavaPlugin {
         lobbyPlugin = this;
         npcManager = new NpcManager();
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerNPCClickListener(this),this);
         getCommand("npc").setExecutor(new MainCommand(this));
     }
 
