@@ -1,0 +1,7 @@
+name: LobbyPlugin
+version: '${project.version}'
+main: com.ja90n.lobbyplugin.LobbyPlugin
+api-version: 1.19
+authors: [ Ja90n ]
+commands:
+  npc:
