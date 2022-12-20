@@ -33,6 +33,7 @@ public class Npc {
         this.id = id;
         this.skin = skin;
         this.location = location;
+        playerUUIDs = new ArrayList<>();
 
         MinecraftServer minecraftServer = MinecraftServer.getServer();
         ServerLevel serverLevel = ((CraftWorld) Bukkit.getWorld("world")).getHandle();
