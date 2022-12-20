@@ -1,7 +1,7 @@
 
 # LobbyPlugin
 A plugin to handle all the trafic for my Minecraft minigame server.
-This plugin will uses NMS to create clickable NPCs to send players to different minigames.
+This plugin will use NMS to create clickable NPCs to send players to different minigames.
 
 
 
