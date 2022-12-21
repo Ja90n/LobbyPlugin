@@ -8,10 +8,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+
 public final class LobbyPlugin extends JavaPlugin {
 
     private static LobbyPlugin lobbyPlugin;
     private NpcManager npcManager;
+    private ServerCommunicationHandler serverCommunicationHandler;
 
     @Override
     public void onEnable() {
@@ -20,6 +23,20 @@ public final class LobbyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerConnectionListener(this),this);
         getServer().getPluginManager().registerEvents(new PlayerNPCClickListener(this),this);
         getCommand("npc").setExecutor(new MainCommand(this));
+
+        try {
+            serverCommunicationHandler = new ServerCommunicationHandler();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        serverCommunicationHandler.sendMessage("testje");
+
+        try {
+            serverCommunicationHandler.recieveMessage();
+        } catch (IOException e) {
+            System.out.println("error help me");
+        }
     }
 
     @Override
@@ -36,5 +53,9 @@ public final class LobbyPlugin extends JavaPlugin {
 
     public NpcManager getNpcManager() {
         return npcManager;
+    }
+
+    public ServerCommunicationHandler getServerCommunicationHandler() {
+        return serverCommunicationHandler;
     }
 }

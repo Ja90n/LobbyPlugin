@@ -16,7 +16,7 @@ public class MainCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
+        lobbyPlugin.getServerCommunicationHandler().sendMessage("ik ben zo goed");
         return false;
     }
 }
