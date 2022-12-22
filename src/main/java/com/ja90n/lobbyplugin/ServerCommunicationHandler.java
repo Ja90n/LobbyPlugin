@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.UUID;
 
 public class ServerCommunicationHandler {
 
@@ -25,6 +26,26 @@ public class ServerCommunicationHandler {
 
     public void sendMessage(String message){
         output.println(message);
+    }
+
+    /*
+    To send a message to a server I use this layout:
+    from server : to server : command : (args)
+
+    for example:
+    lobby:proxy:sendPlayer:(Player UUID):destinationServer
+     */
+
+    // Sends a player to a server
+    public void sendPlayerToServer(UUID playerUUID, String server){
+        String message = Bukkit.getServer().getName() + ":" + server + ":" + MessageType.SEND_PLAYER.getMessage() + ":" + playerUUID.toString();
+        sendMessage(message);
+    }
+
+    // Sends player to lobby
+    public void kickPlayer(UUID playerUUID){
+        String message = Bukkit.getServer().getName() + ":" + "lobby" + ":" + MessageType.KICK_PLAYER.getMessage() + ":" + playerUUID.toString();
+        sendMessage(message);
     }
 
     public void receiveMessage() throws IOException {

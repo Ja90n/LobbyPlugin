@@ -72,6 +72,7 @@ public class Npc {
     }
 
     public void hideNPC(Player player){
+        playerUUIDs.remove(player.getUniqueId());
         ServerPlayer serverPlayer = ((CraftPlayer) player).getHandle();
         ServerGamePacketListenerImpl connection = serverPlayer.connection;
         connection.send(new ClientboundRemoveEntitiesPacket(npc.getId()));
