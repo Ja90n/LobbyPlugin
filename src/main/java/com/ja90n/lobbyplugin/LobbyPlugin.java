@@ -33,7 +33,7 @@ public final class LobbyPlugin extends JavaPlugin {
         serverCommunicationHandler.sendMessage("testje");
 
         try {
-            serverCommunicationHandler.recieveMessage();
+            serverCommunicationHandler.receiveMessage();
         } catch (IOException e) {
             System.out.println("error help me");
         }
