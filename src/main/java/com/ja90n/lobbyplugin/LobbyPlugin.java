@@ -26,17 +26,9 @@ public final class LobbyPlugin extends JavaPlugin {
 
         try {
             serverCommunicationHandler = new ServerCommunicationHandler();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        serverCommunicationHandler.sendMessage("testje");
-
-        try {
+            serverCommunicationHandler.sendMessage("testje");
             serverCommunicationHandler.receiveMessage();
-        } catch (IOException e) {
-            System.out.println("error help me");
-        }
+        } catch (IOException e) { getLogger().warning("Connection refusesd"); }
     }
 
     @Override
