@@ -25,10 +25,10 @@ public final class LobbyPlugin extends JavaPlugin {
         getCommand("npc").setExecutor(new MainCommand(this));
 
         try {
-            serverCommunicationHandler = new ServerCommunicationHandler();
-            serverCommunicationHandler.sendMessage("testje");
-            serverCommunicationHandler.receiveMessage();
-        } catch (IOException e) { getLogger().warning("Connection refusesd"); }
+            serverCommunicationHandler = new ServerCommunicationHandler(this);
+        } catch (IOException e) {
+            getLogger().warning("Connection refused");
+        }
     }
 
     @Override

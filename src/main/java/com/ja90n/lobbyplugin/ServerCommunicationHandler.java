@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Random;
 import java.util.UUID;
 
 public class ServerCommunicationHandler {
@@ -20,15 +21,76 @@ public class ServerCommunicationHandler {
     private BufferedReader input;
     private PrintWriter output;
     private final LobbyPlugin lobbyPlugin;
+    private final String name;
 
     public ServerCommunicationHandler(LobbyPlugin lobbyPlugin) throws IOException {
         socket = new Socket(SERVER_IP, PORT);
         this.lobbyPlugin = lobbyPlugin;
+
+        name = "lobby";
+
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream(),true);
+
+        initialConnect();
     }
 
-    public void sendMessage(String message){
+    public void initialConnect(){
+        Bukkit.getScheduler().runTaskAsynchronously(lobbyPlugin, () -> {
+            int random = randomNumber();
+            sendMessage(name + ":proxy:initialConnect:" + random);
+            while (true){
+                try {
+                    String message = input.readLine();
+                    String[] args = message.split(":");
+                    if (String.valueOf(random).equals(args[3])){
+                        lobbyPlugin.getLogger().warning("Initial connection success!");
+                        receiveMessage();
+                        break;
+                    }
+                } catch (IOException e) {}
+            }
+        });
+    }
+
+    public void receiveMessage() throws IOException {
+        Bukkit.getScheduler().runTaskAsynchronously(lobbyPlugin, () -> {
+            while (true){
+                try {
+                    String message = input.readLine();
+                    if (message.startsWith(Bukkit.getServer().getName())){
+                        ServerMessageReceiveEvent event = new ServerMessageReceiveEvent(message);
+                        Bukkit.getPluginManager().callEvent(event);
+                    }
+                } catch (IOException e) {
+                    reconnect();
+                }
+            }
+        });
+    }
+
+    public void reconnect(){
+        lobbyPlugin.getLogger().warning("Disconnected from server");
+        lobbyPlugin.getLogger().warning("Trying to reconnecting...");
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(LobbyPlugin.getInstance(), () -> {
+            lobbyPlugin.getLogger().warning("Still trying to reconnect");
+        },0,80);
+
+        Bukkit.getScheduler().runTaskAsynchronously(LobbyPlugin.getInstance(), () -> {
+            while (true){
+                try {
+                    socket = new Socket(SERVER_IP,PORT);
+                    input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    output = new PrintWriter(socket.getOutputStream(),true);
+                    task.cancel();
+                    lobbyPlugin.getLogger().info("Connection restored!");
+                    break;
+                } catch (IOException e) {}
+            }
+        });
+    }
+
+    private void sendMessage(String message){
         output.println(message);
     }
 
@@ -52,40 +114,9 @@ public class ServerCommunicationHandler {
         sendMessage(message);
     }
 
-    public void receiveMessage() throws IOException {
-        Bukkit.getScheduler().runTaskAsynchronously(lobbyPlugin, () -> {
-            while (true){
-                try {
-                    String message = input.readLine();
-                    if (message.startsWith(Bukkit.getServer().getName())){
-                        ServerMessageReceiveEvent event = new ServerMessageReceiveEvent(message);
-                        Bukkit.getPluginManager().callEvent(event);
-                    }
-                } catch (IOException e) {
-                    reconnect();
-                }
-            }
-        });
-    }
-
-    public void reconnect(){
-        lobbyPlugin.getLogger().warning("Reconnecting...");
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(LobbyPlugin.getInstance(), () -> {
-            lobbyPlugin.getLogger().warning("Still trying to reconnect");
-        },0,80);
-
-        Bukkit.getScheduler().runTaskAsynchronously(LobbyPlugin.getInstance(), () -> {
-            while (true){
-                try {
-                    socket = new Socket(SERVER_IP,PORT);
-                    input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    output = new PrintWriter(socket.getOutputStream(),true);
-                    task.cancel();
-                } catch (IOException e) {}
-                finally {
-                    lobbyPlugin.getLogger().info("Connection restored!");
-                }
-            }
-        });
+    private int randomNumber(){
+        Random rand = new Random();
+        int upperbound = 10000; // Last number not included
+        return rand.nextInt(upperbound);
     }
 }
