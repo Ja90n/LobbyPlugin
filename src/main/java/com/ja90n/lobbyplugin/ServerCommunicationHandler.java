@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
@@ -58,8 +58,25 @@ public class ServerCommunicationHandler {
             while (true){
                 try {
                     String message = input.readLine();
-                    if (message.startsWith(Bukkit.getServer().getName())){
-                        ServerMessageReceiveEvent event = new ServerMessageReceiveEvent(message);
+                    String[] args = message.split(":");
+                    if (args[1].equals(name)){
+                        MessageType messageType = null;
+                        for (MessageType type : MessageType.values()){
+                            if (type.getMessage().equals(args[2])){
+                                messageType = type;
+                            }
+                        }
+                        if (messageType == null) return;
+                        int i = 3;
+                        ArrayList<String> list = new ArrayList<>();
+                        while (true){
+                            if (!args[i].isEmpty()){
+                                list.add(args[i]);
+                            } else {
+                                break;
+                            }
+                        }
+                        ServerMessageReceiveEvent event = new ServerMessageReceiveEvent(message, args[0], messageType, list,this);
                         Bukkit.getPluginManager().callEvent(event);
                     }
                 } catch (IOException e) {
@@ -92,6 +109,14 @@ public class ServerCommunicationHandler {
 
     private void sendMessage(String message){
         output.println(message);
+    }
+
+    public void sendGameStateResponse(String sender){
+        output.println(name + ":" + sender + ":" + MessageType.GAMESTATE.getMessage() + "(gamestate)");
+    }
+
+    public void sendPlayerCountRequest(String sender){
+        output.println(name + ":" + sender + ":" + MessageType.PLAYERCOUNT.getMessage() + ":" + lobbyPlugin.getServer().getOnlinePlayers().size());
     }
 
     /*
