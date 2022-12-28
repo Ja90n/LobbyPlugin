@@ -108,15 +108,16 @@ public class ServerCommunicationHandler {
     }
 
     private void sendMessage(String message){
+        System.out.println(message);
         output.println(message);
     }
 
     public void sendGameStateResponse(String sender){
-        output.println(name + ":" + sender + ":" + MessageType.GAMESTATE.getMessage() + "(gamestate)");
+        sendMessage(name + ":" + sender + ":" + MessageType.GAMESTATE.getMessage() + "(gamestate)");
     }
 
     public void sendPlayerCountRequest(String sender){
-        output.println(name + ":" + sender + ":" + MessageType.PLAYERCOUNT.getMessage() + ":" + lobbyPlugin.getServer().getOnlinePlayers().size());
+        sendMessage(name + ":" + sender + ":" + MessageType.PLAYERCOUNT.getMessage() + ":" + lobbyPlugin.getServer().getOnlinePlayers().size());
     }
 
     /*
@@ -129,7 +130,7 @@ public class ServerCommunicationHandler {
 
     // Sends a player to a server
     public void sendPlayerToServer(UUID playerUUID, String server){
-        String message = Bukkit.getServer().getName() + ":" + server + ":" + MessageType.SEND_PLAYER.getMessage() + ":" + playerUUID.toString();
+        String message = name + ":" + "proxy" + ":" + MessageType.SEND_PLAYER.getMessage() + ":" + playerUUID.toString() + ":" + server;
         sendMessage(message);
     }
 

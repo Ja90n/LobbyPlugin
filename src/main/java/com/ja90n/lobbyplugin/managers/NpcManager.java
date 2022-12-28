@@ -24,7 +24,7 @@ public class NpcManager {
         // Create all NPCs on startup
         createNPC(
                 Skin.KABOUTERTEUN08,
-                new Location(Bukkit.getWorld("world"), 0,-60,0),
+                new Location(Bukkit.getWorld("world"), 0.5,0.5,8.5,-180,0),
                 ChatColor.GREEN + "KabouterTeun08");
     }
 
